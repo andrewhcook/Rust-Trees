@@ -54,10 +54,10 @@ fn main() {
 }
 
 
-fn model(app: &App) -> Model{
+fn model(_app: &App) -> Model{
     let mut leaves = vec![];
     leaves.push(Leaf{ position: Vec3::from([0.0, -320.0, 0.0]), reached: false });
-    for i in 0..=700 {
+    for _i in 0..=700 {
 
         let new_leaf = Leaf{ position: Vec3::from([random_range( -300.0, 300.0), random_range( -315.0, 450.0),random_range( -450.0, 450.0)]), reached: false };
       //  println!("{:?}", new_leaf.position);
@@ -80,7 +80,7 @@ fn model(app: &App) -> Model{
 
 
 
-fn update(app: &App, model: &mut Model, update: Update) {
+fn update(_app: &App, model: &mut Model, _update: Update) {
     model.y_rotation += 0.0671;
 
 
@@ -88,13 +88,13 @@ fn update(app: &App, model: &mut Model, update: Update) {
     let mut new_leaves_vec = Vec::new();
     let mut new_branch_vec = Vec::new();
 
-    for mut i in 0..model.leaves.len() {
+    for i in 0..model.leaves.len() {
 
         let mut closest_branch = None;
         let mut record = model.max_dist;
         let mut parent_directory = None;
-        for mut j in  0..model.branches.len() {
-            let distance1 = pow((model.branches[j].position[0] - model.leaves[i].position[0]), 2) + pow((model.branches[j].position[1] - model.leaves[i].position[1]), 2);
+        for j in  0..model.branches.len() {
+            let distance1 = pow(model.branches[j].position[0] - model.leaves[i].position[0], 2) + pow(model.branches[j].position[1] - model.leaves[i].position[1], 2);
             let distance = distance1.sqrt() ;
          //   println!("{} {:?} {:?}", distance, model.branches[j].position, model.leaves[i].position);
             if distance < model.min_dist {
@@ -120,7 +120,7 @@ fn update(app: &App, model: &mut Model, update: Update) {
                     branch.count +=1.0;
               //      println!("here {:?}", branch.direction);
                     match new_branch_vec.iter().position(|x| x == &branch.next(parent_directory.unwrap())){
-                        Some(number) => {},
+                        Some(_number) => {},
                         None => {new_branch_vec.push(branch.next(parent_directory.unwrap()))}
                     }
 
@@ -143,18 +143,18 @@ fn update(app: &App, model: &mut Model, update: Update) {
             branch.direction = Vec3::from(branch.direction.div(Vec3::from([branch.count + 1.0, branch.count + 1.0, branch.count + 1.0])));
        //     println!("{:?}", branch.direction);
             match new_branch_vec.iter().position(|x| x == &branch.next(i)) {
-                Some(number) => {},
+                Some(_number) => {},
                 None => {new_branch_vec.push(branch.next(i));
-                    ;}
+                    }
 
             } branch.reset();
         }
     }
     for i in new_branch_vec {
         match model.branches.iter().position(|x| x == &i) {
-                Some(number) => {},
+                Some(_number) => {},
                 None => {model.branches.push(i);
-                    ;}
+                    }
         }
 
     }
