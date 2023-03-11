@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Sub};
+use std::{ops::{Add, Div, Mul, Sub}};
 use nannou::prelude::*;
 
 struct Model {
@@ -57,7 +57,7 @@ fn main() {
 fn model(_app: &App) -> Model{
     let mut leaves = vec![];
     leaves.push(Leaf{ position: Vec3::from([0.0, -320.0, 0.0]), reached: false });
-    for _i in 0..=700 {
+    for _i in 0..=100 {
 
         let new_leaf = Leaf{ position: Vec3::from([random_range( -300.0, 300.0), random_range( -315.0, 450.0),random_range( -450.0, 450.0)]), reached: false };
       //  println!("{:?}", new_leaf.position);
@@ -68,8 +68,8 @@ fn model(_app: &App) -> Model{
     let second_branch = Branch{ parent_dir: None, position: Vec3::from([-50.0, -370.0, 50.0]), direction: Vec3::from([0.0, 0.0, 0.0]) , length: 5.0, count: 0.0 };
    // let third_branch = Branch{ parent_dir: None, position: [0.0,0.0], direction: [0.0,0.0], length: 5.0, count: 0.0 };
     Model{
-        max_dist: 120.0,
-        min_dist: 5.0,
+        max_dist: 275.0,
+        min_dist: 0.50,
         branches: vec![first_branch, second_branch],
         leaves,
         x_rotation: 0.0,
@@ -81,7 +81,7 @@ fn model(_app: &App) -> Model{
 
 
 fn update(_app: &App, model: &mut Model, _update: Update) {
-    model.y_rotation += 0.0671;
+    model.y_rotation += 0.00671;
 
 
 
@@ -96,7 +96,9 @@ fn update(_app: &App, model: &mut Model, _update: Update) {
         for j in  0..model.branches.len() {
             let distance1 = pow(model.branches[j].position[0] - model.leaves[i].position[0], 2) + pow(model.branches[j].position[1] - model.leaves[i].position[1], 2);
             let distance = distance1.sqrt() ;
-         //   println!("{} {:?} {:?}", distance, model.branches[j].position, model.leaves[i].position);
+
+            let distance = model.branches[j].position.distance(model.leaves[i].position);
+       //     println!("{} {:?} {:?}", distance, model.branches[j].position, model.leaves[i].position);
             if distance < model.min_dist {
                 model.leaves[i].reached = true;
                 closest_branch = None;
@@ -170,6 +172,16 @@ fn view(app: &App, model: &Model, frame: Frame) {
             None =>{}
         };
 
+    }
+    draw.to_frame(app, &frame).unwrap();
+    draw.point_mode();
+    for i in &model.leaves {
+        let theta = model.y_rotation * 2.0 * std::f32::consts::PI;
+        let x = (i.position.x * theta.cos()) + (i.position.z * theta.sin());
+        let z = -(i.position.x * theta.sin()) + (i.position.z * theta.cos());
+
+        draw.ellipse().x_y_z(x, i.position.y, z).radius(10.0);
+        //draw.ellipse().x_y_z(i.position.x,i.position.y, i.position.z).radius(10.0).y_turns(model.y_rotation);
     }
 
     draw.to_frame(app, &frame).unwrap();
